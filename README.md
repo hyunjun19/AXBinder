@@ -4,12 +4,14 @@ Simple two way binding javascript, jQuery plugin
 
 [![axisj-contributed](https://img.shields.io/badge/AXISJ.com-OpensourceJavascriptUILibrary-green.svg)](https://github.com/axisj) ![](https://img.shields.io/badge/Seowoo-Mondo&Thomas-red.svg)
 
-http://thomasjang.github.io/AXBinder/
+
+## Online Demo
+http://axisj.github.io/AXBinder/
 
 
 ## dependencies
 - jQuery
-- Mustache - dist/AXBinder.min.js 내장
+- Mustache
 
 # API
 
@@ -36,7 +38,7 @@ http://thomasjang.github.io/AXBinder/
 
 ## Methods
 
-### AXBinder.set_model(Object, jQueryObject) : Model
+### AXBinder.set_model(Object[, jQueryObject]) : Model
 바인딩할 자바스크립트 오브젝트로
 제이쿼리로 검색된 HTML dom 엘리먼트 에 바인딩합니다.
 바인딩된 모델을 반환합니다.
@@ -48,13 +50,16 @@ http://thomasjang.github.io/AXBinder/
 </div>
 ```
 
-```javascript
+```js
 var obj = {
 	name: "Thomas",
-	email: "tom@axisj.com
+	email: "tom@axisj.com"
 }
-var myModel = AXBinder.set_model(obj, $("#form-target"));
+
+var myModel = new AXBinder();
+myModel.set_model(obj, $("#form-target"));
 ```
+
 
 ### Model.set(data_path, value) : Model
 data_path에 값을 변경한다. value의 타입은 (String, Number, Array, Object)를 지원.
@@ -108,8 +113,9 @@ myModel.onclick("list", function () {
 ```
 
 
+
 ### Model.add(repeat_path, Object) : Model
-data-ax-repeat="list" 하위 아이템을 추가합니다.
+data-ax-repeat="list" 하위아이템을 추가합니다.
 ```js
 myModel.add("list", {a:1});
 ```
@@ -119,7 +125,7 @@ data-ax-repeat="list" 하위 아이템을 제거합니다. 단! 이 때 __ADDED_
 ```js
 myModel.remove("list", 0);
 ```
-### Model.update(repeat_path, index, Object) : Model
+### Model.update(repeat_path[, index, Object]) : Model
 data-ax-repeat="list" 하위 아이템을 교체합니다.
 ```js
 myModel.update("list", 0, {a:1});
@@ -142,5 +148,19 @@ data-ax-repeat="list" 하위 아이템중 child_key의 하위 아이템을 교�
 myModel.child_update("list", 0, "child", 0, {a:1});
 ```
 
-
-
+### Model.validate() : Object
+data-ax-validate 를 가진 엘리먼트에 대해 값을 검사하고 값이 없거나 짦은 경우 error를 리턴합니다.
+```html
+<input type="text" data-ax-path="q" data-ax-validate="required" 
+    title="이름" maxlength="8" class="AXInput W150" value=""/>
+```
+```js
+var rs = myModel.validate(), _s;
+console.log(rs); // 결과를 체크 해보세요
+if(rs.error) {
+    _s = rs.error[0].jquery.attr("title");
+    alert("" + _s + "(은)는 필수 입력사항입니다." + _s + "(을)를 입력하세요");
+    rs.error[0].el.focus();
+    return;
+}
+```
